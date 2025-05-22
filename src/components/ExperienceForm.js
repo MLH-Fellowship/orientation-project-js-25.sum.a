@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { format } from "date-fns";
 
 const ExperienceForm = ({ onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -9,6 +12,10 @@ const ExperienceForm = ({ onSubmit, onCancel }) => {
     description: "",
     logo: ""
   });
+  
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [isCurrentJob, setIsCurrentJob] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,6 +23,39 @@ const ExperienceForm = ({ onSubmit, onCancel }) => {
       ...formData,
       [name]: value
     });
+  };
+  
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
+    setFormData({
+      ...formData,
+      start_date: date ? format(date, "MMMM yyyy") : ""
+    });
+  };
+  
+  const handleEndDateChange = (date) => {
+    setEndDate(date);
+    setFormData({
+      ...formData,
+      end_date: date ? format(date, "MMMM yyyy") : ""
+    });
+  };
+  
+  const handleCurrentJobChange = (e) => {
+    const isChecked = e.target.checked;
+    setIsCurrentJob(isChecked);
+    if (isChecked) {
+      setEndDate(null);
+      setFormData({
+        ...formData,
+        end_date: "Present"
+      });
+    } else {
+      setFormData({
+        ...formData,
+        end_date: endDate ? format(endDate, "MMMM yyyy") : ""
+      });
+    }
   };
 
   const handleSubmit = (e) => {
@@ -50,30 +90,43 @@ const ExperienceForm = ({ onSubmit, onCancel }) => {
             required
           />
         </div>
-        
-        <div className="formField">
+          <div className="formField">
           <label htmlFor="start_date">Start Date:</label>
-          <input
-            type="text"
+          <DatePicker
             id="start_date"
-            name="start_date"
-            value={formData.start_date}
-            onChange={handleChange}
-            placeholder="e.g., January 2022"
+            selected={startDate}
+            onChange={handleStartDateChange}
+            dateFormat="MMMM yyyy"
+            showMonthYearPicker
+            placeholderText="Select start date"
+            className="datePicker"
             required
           />
         </div>
         
         <div className="formField">
           <label htmlFor="end_date">End Date:</label>
-          <input
-            type="text"
-            id="end_date"
-            name="end_date"
-            value={formData.end_date}
-            onChange={handleChange}
-            placeholder="e.g., Present or December 2023"
-          />
+          <div className="endDateContainer">
+            <DatePicker
+              id="end_date"
+              selected={endDate}
+              onChange={handleEndDateChange}
+              dateFormat="MMMM yyyy"
+              showMonthYearPicker
+              placeholderText="Select end date"
+              className="datePicker"
+              disabled={isCurrentJob}
+            />
+            <div className="currentJobCheckbox">
+              <input
+                type="checkbox"
+                id="currentJob"
+                checked={isCurrentJob}
+                onChange={handleCurrentJobChange}
+              />
+              <label htmlFor="currentJob">I currently work here</label>
+            </div>
+          </div>
         </div>
         
         <div className="formField">
