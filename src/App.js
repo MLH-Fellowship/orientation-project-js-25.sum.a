@@ -1,4 +1,5 @@
 import "./App.css";
+import Experience from "./components/Experience";
 
 function App() {
   return (
@@ -6,9 +7,7 @@ function App() {
       <h1>Resume Builder</h1>
       <div className="resumeSection">
         <h2>Experience</h2>
-        <p>Experience Placeholder</p>
-        <button>Add Experience</button>
-        <br></br>
+        <Experience />
       </div>
       <div className="resumeSection">
         <h2>Education</h2>
