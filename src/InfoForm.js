@@ -1,21 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const InfoForm = () => {
     const [name, setName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [email, setEmail] = useState('');
-    const [isEditing, setIsEditing] = useState(false); // To simulate update vs add
-    const [userId, setUserId] = useState(null); // To simulate updating a specific user
+    const [isEditing, setIsEditing] = useState(false);
+    const [userId, setUserId] = useState(null);
+
+    useEffect(() => {
+        if (name === '' && phoneNumber === '' && email === '' && userId === null) {
+            setIsEditing(false);
+        }
+    }, [name, phoneNumber, email, userId]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
         // Basic validation
         if (!name || !phoneNumber || !email) {
             alert('All fields are required.');
             return;
         }
-
+        
         if (!/^\+\d+$/.test(phoneNumber)) {
             alert('Phone number must be in international format (e.g., +1234567890).');
             return;
@@ -25,11 +30,11 @@ const InfoForm = () => {
             alert('Please enter a valid email address.');
             return;
         }
-
+        
         const userData = { name, phoneNumber, email };
 
         try {
-            let response;
+            // let response; // Uncomment if you use the fetch calls
             if (isEditing && userId) {
                 // Placeholder for UPDATE API call
                 console.log('Updating user:', userId, userData);
@@ -50,7 +55,7 @@ const InfoForm = () => {
                 alert('User data submission initiated (see console).'); // Placeholder
             }
 
-            // const result = await response.json();
+            // const result = await response.json(); // Uncomment if you use the fetch calls
             // if (response.ok) {
             //     alert(`User data ${isEditing ? 'updated' : 'added'} successfully!`);
             //     // Reset form or redirect, etc.
@@ -87,11 +92,10 @@ const InfoForm = () => {
         }
     };
 
-
     return (
-        <div className="InfoForm-container">
-            <h2>{isEditing ? 'Update Information' : 'Add Information'}</h2>
-            <form onSubmit={handleSubmit}>
+        <div className="InfoForm-container no-print">
+            <h2 className="no-print">{isEditing ? 'Update Information' : 'Add Information'}</h2>
+            <form onSubmit={handleSubmit} className="no-print">
                 <div>
                     <label htmlFor="name">Name:</label>
                     <input
@@ -123,7 +127,8 @@ const InfoForm = () => {
                         required
                     />
                 </div>
-                <div className="form-buttons-container">
+
+                <div className="form-buttons-container no-print">
                     <button type="submit">{isEditing ? 'Update' : 'Add'}</button>
                     {!isEditing && (
                         <button type="button" onClick={() => loadUserDataForEdit('123')}>
@@ -132,11 +137,11 @@ const InfoForm = () => {
                     )}
                     {isEditing && (
                         <button type="button" onClick={() => {
-                            setIsEditing(false);
-                            setUserId(null);
-                            setName('');
+                            setName(''); 
                             setPhoneNumber('');
                             setEmail('');
+                            setIsEditing(false);
+                            setUserId(null);
                         }}>
                             Cancel Edit / Add New
                         </button>
@@ -147,4 +152,4 @@ const InfoForm = () => {
     );
 };
 
-export default InfoForm; 
+export default InfoForm;
